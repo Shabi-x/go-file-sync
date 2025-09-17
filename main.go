@@ -21,14 +21,17 @@ func main() {
 	}
 	
 	ui, _ := lorca.New("data:text/html,<html><head><title>go-file-sync</title></head><body><h1>Hello, Lorca!</h1></body></html>", "", 800, 600, args...)
-	defer ui.Close()
-
-	// 等待信号
+	// 等待信号, 收到signal时interrupt
 	sigc := make(chan os.Signal, 1)
+	// 监听system interrupt信号和terminate信号
 	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
+
+
 	select {
-	case <-sigc:
-	case <-ui.Done():
+		// ”<-语法“ 会阻塞当前线程，直到有预期信号之一抵达才会执行ui的关闭
+		case <-sigc:
+		case <-ui.Done(): 
 	}
+	ui.Close()
 }
 
