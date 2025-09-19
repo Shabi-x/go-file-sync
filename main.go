@@ -36,7 +36,7 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				defer reader.Close()
+				defer reader.Close() // 确保文件在读取后关闭
 				stat, err := reader.Stat()
 				if err != nil {
 					log.Fatal(err)
