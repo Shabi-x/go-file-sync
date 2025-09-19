@@ -1,14 +1,30 @@
 package main
 
 import (
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/zserge/lorca"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	// 启动Gin服务器
+	go func() {
+		r := gin.Default()
+		r.GET("/", func(c *gin.Context) {
+			c.Header("Content-Type", "text/html; charset=utf-8")
+			c.String(http.StatusOK, "<html><head><title>go-file-sync</title></head><body><h1>Hello, Gin!</h1><p>This is served by Gin on port 8080</p></body></html>")
+		})
+		r.Run(":8080")
+	}()
+
+	// 等待服务器启动
+	time.Sleep(1 * time.Second)
+
 	args := []string{
 		"--remote-allow-origins=*",  // 关键参数：允许所有来源的远程连接
 		"--remote-debugging-port=9222", // 固定调试端口
@@ -20,15 +36,14 @@ func main() {
 		"--disable-default-apps",    // 禁用默认应用
 	}
 	
-	ui, _ := lorca.New("data:text/html,<html><head><title>go-file-sync</title></head><body><h1>Hello, Lorca!</h1></body></html>", "", 800, 600, args...)
+	ui, _ := lorca.New("http://localhost:8080", "", 800, 600, args...)
 	// 等待信号, 收到signal时interrupt
 	sigc := make(chan os.Signal, 1)
 	// 监听system interrupt信号和terminate信号
 	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
 
-
 	select {
-		// ”<-语法“ 会阻塞当前线程，直到有预期信号之一抵达才会执行ui的关闭
+		// ”<-语法“是用于提取channel中的值，没有值时会阻塞当前线程，直到有预期信号之一抵达才会执行ui的关闭
 		case <-sigc:
 		case <-ui.Done(): 
 	}
