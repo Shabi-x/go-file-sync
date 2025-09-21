@@ -4,6 +4,7 @@ import (
 	"embed"
 	"io/fs"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -30,7 +31,8 @@ func main() {
 			c.Header("Content-Type", "text/html; charset=utf-8")
 			c.String(http.StatusOK, "<html><head><title>go-file-sync</title></head><body><h1>Hello, Gin!</h1><p>This is served by Gin on port 8080</p></body></html>")
 		})
-		r.POST("api/v1/texts", TextController)
+		r.POST("/api/v1/texts", TextController)
+		r.GET("/api/v1/addresses", AddressController)
 		staticFiles, _ := fs.Sub(FS, "frontend/dist")
 		r.StaticFS("/static", http.FS(staticFiles)) // 在路由中添加静态文件前端服务
 		// 所有未匹配的路由都返回index.html
@@ -120,4 +122,24 @@ func TextController(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, gin.H{"filename": fileName + ".txt"})
 	}
+}
+
+/**
+ * @api {get} /api/v1/addresses 获取IP地址并返回给前端
+ * @apiName GetAddresses
+ * @apiGroup Address
+ *
+ * @apiSuccess {String[]} addresses IP地址列表
+ */
+func AddressController(c *gin.Context) {
+	addrs, _ := net.InterfaceAddrs() // 获取所有ip地址
+	var result []string
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				result = append(result, ipnet.IP.String())
+			}
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{"addresses": result})
 }
