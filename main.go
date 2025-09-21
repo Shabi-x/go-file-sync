@@ -190,7 +190,7 @@ func UploadsController(c *gin.Context) {
  * @apiName GetQRCode
  * @apiGroup QRCode
  *
- * @apiParam {String} content 二维码内容
+ * @apiParam {String} content 前端传递的二维码url链接
  *
  * @apiSuccess {File} file 下载的文件
  */
