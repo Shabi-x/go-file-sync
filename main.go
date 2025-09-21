@@ -16,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/skip2/go-qrcode"
 	"github.com/zserge/lorca"
 )
 
@@ -34,6 +35,7 @@ func main() {
 		r.POST("/api/v1/texts", TextController)
 		r.GET("/uploads/:path", UploadsController)
 		r.GET("/api/v1/addresses", AddressController)
+		r.GET("/api/v1/qrcodes", QRCodesController)
 		staticFiles, _ := fs.Sub(FS, "frontend/dist")
 		r.StaticFS("/static", http.FS(staticFiles)) // 在路由中添加静态文件前端服务
 		// 所有未匹配的路由都返回index.html
@@ -180,5 +182,26 @@ func UploadsController(c *gin.Context) {
 		c.File(target)
 	} else {
 		c.Status(http.StatusNotFound)
+	}
+}
+
+/**
+ * @api {get} /api/v1/qrcodes 获取二维码
+ * @apiName GetQRCode
+ * @apiGroup QRCode
+ *
+ * @apiParam {String} content 二维码内容
+ *
+ * @apiSuccess {File} file 下载的文件
+ */
+func QRCodesController(c *gin.Context) {
+	if content := c.Query("content"); content != "" {
+		png, err := qrcode.Encode(content, qrcode.Medium, 256)
+		if err != nil {
+			log.Fatal("encode qrcode failed", err)
+		}
+		c.Data(http.StatusOK, "image/png", png)
+	} else {
+		c.Status(http.StatusBadRequest)
 	}
 }
