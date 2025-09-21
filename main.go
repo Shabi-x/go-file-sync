@@ -7,11 +7,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/zserge/lorca"
 )
 
@@ -21,11 +24,13 @@ var FS embed.FS
 func main() {
 	// 启动Gin服务器，启动一个协程
 	go func() {
+		gin.SetMode(gin.ReleaseMode)
 		r := gin.Default()
 		r.GET("/", func(c *gin.Context) {
 			c.Header("Content-Type", "text/html; charset=utf-8")
 			c.String(http.StatusOK, "<html><head><title>go-file-sync</title></head><body><h1>Hello, Gin!</h1><p>This is served by Gin on port 8080</p></body></html>")
 		})
+		r.POST("api/v1/texts", TextController)
 		staticFiles, _ := fs.Sub(FS, "frontend/dist")
 		r.StaticFS("/static", http.FS(staticFiles)) // 在路由中添加静态文件前端服务
 		// 所有未匹配的路由都返回index.html
@@ -75,4 +80,44 @@ func main() {
 	case <-ui.Done():
 	}
 	ui.Close()
+}
+
+/**
+ * @api {post} /api/v1/texts 文本上传
+ * @apiName UploadText
+ * @apiGroup Text
+ *
+ * @apiParam {String} raw 文本内容
+ *
+ * @apiSuccess {String} filename 文件名
+ */
+func TextController(c *gin.Context) {
+	var json struct {
+		Raw string `json:"raw"` // 前端传递的文本内容
+	}
+
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+	} else {
+		exe, err := os.Executable() // 获取当前可执行文件的路径,并绑定到uploads目录下
+		if err != nil {
+			log.Fatal("get executable path failed", err)
+		}
+		dir := filepath.Dir(exe) // 获取当前可执行文件exe的目录
+		if err != nil {
+			log.Fatal("get executable dir failed", err)
+		}
+		fileName := uuid.New().String()
+		uploads := filepath.Join(dir, "uploads") //exe 所在目录拼接uploads目录
+		err = os.MkdirAll(uploads, os.ModePerm)  // 创建了一个我们完全能控制的uploads目录, 权限是0777
+		if err != nil {
+			log.Fatal("create uploads dir failed", err)
+		}
+		fullPath := path.Join(uploads, fileName+".txt")
+		err = os.WriteFile(fullPath, []byte(json.Raw), os.ModePerm) // 将json.Raw写入返回的fullPath文件中
+		if err != nil {
+			log.Fatal("write file failed", err)
+		}
+		c.JSON(http.StatusOK, gin.H{"filename": fileName + ".txt"})
+	}
 }
