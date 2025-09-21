@@ -23,6 +23,9 @@ import (
 //go:embed frontend/dist/*
 var FS embed.FS
 
+// 服务器端口配置
+const port = "27149"
+
 func main() {
 	// 启动Gin服务器，启动一个协程
 	go func() {
@@ -57,7 +60,7 @@ func main() {
 				c.Status(http.StatusNotFound)
 			}
 		})
-		r.Run(":8080")
+		r.Run(":" + port)
 	}()
 
 	// 等待服务器启动
@@ -74,7 +77,7 @@ func main() {
 		"--disable-default-apps",          // 禁用默认应用
 	}
 
-	ui, _ := lorca.New("http://localhost:8080/static/", "", 800, 600, args...)
+	ui, _ := lorca.New("http://localhost:"+port+"/static/", "", 800, 600, args...)
 	// 等待信号, 收到signal时interrupt
 	sigc := make(chan os.Signal, 1)
 	// 监听system interrupt信号和terminate信号
