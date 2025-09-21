@@ -5,7 +5,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # Frontend source code (not to be uploaded to GitHub)
-/frontend/
+/frontend/src/
+/frontend/index.html
+/frontend/package.json
+/frontend/package-lock.json
+/frontend/yarn.lock
+/frontend/tsconfig.json
+/frontend/vite.config.ts
 
 # Production builds
 /build/
