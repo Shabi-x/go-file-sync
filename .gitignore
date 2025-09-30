@@ -4,12 +4,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Frontend source code (not to be uploaded to GitHub)
-/server/frontend/*
-!/server/frontend/dist/
-/server/frontend/dist/*
-!/server/frontend/dist/assets/
-!/server/frontend/dist/index.html
 
 # Production builds
 /build/
