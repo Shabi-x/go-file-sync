@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"embed"
@@ -13,6 +13,9 @@ import (
 
 //go:embed frontend/dist/*
 var FS embed.FS
+
+// 服务器端口配置
+const port = "27149"
 
 // StartServer 启动Gin服务器
 func StartServer() {

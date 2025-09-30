@@ -6,6 +6,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Shabix/go-file-sync/server"
 	"github.com/zserge/lorca"
 )
 
@@ -15,7 +16,7 @@ const port = "27149"
 func main() {
 	// 启动Gin服务器，启动一个协程
 	go func() {
-		StartServer()
+		server.StartServer()
 	}()
 
 	// 等待服务器启动
