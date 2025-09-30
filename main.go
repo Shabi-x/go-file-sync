@@ -15,9 +15,7 @@ const port = "27149"
 
 func main() {
 	// 启动Gin服务器，启动一个协程
-	go func() {
-		server.StartServer()
-	}()
+	go server.StartServer()
 
 	// 等待服务器启动
 	time.Sleep(1 * time.Second)

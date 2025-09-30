@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Shabix/go-file-sync/controller"
+	"github.com/Shabix/go-file-sync/server/controller"
 	"github.com/gin-gonic/gin"
 )
 
