@@ -1,0 +1,16 @@
+# Tell GitHub to recognize this as a Go project
+*.go linguist-language=Go
+*.mod linguist-language=Go
+*.sum linguist-language=Go
+
+# Downweight JavaScript/TypeScript files in language statistics
+*.js linguist-detectable=false
+*.jsx linguist-detectable=false
+*.ts linguist-detectable=false
+*.tsx linguist-detectable=false
+*.json linguist-detectable=false
+
+# Downweight frontend configuration files
+package.json linguist-detectable=false
+tsconfig.json linguist-detectable=false
+vite.config.ts linguist-detectable=false
