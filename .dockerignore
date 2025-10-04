@@ -1,0 +1,43 @@
+# Git相关
+.git
+.gitignore
+
+# Docker相关
+Dockerfile
+.dockerignore
+
+# IDE相关
+.vscode/
+.idea/
+
+# 构建产物
+main
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 测试相关
+*.test
+*.out
+coverage.txt
+
+# 依赖目录
+vendor/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+
+# 临时文件
+tmp/
+temp/
+
+# Node.js相关（如果有前端）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
