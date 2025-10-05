@@ -61,17 +61,28 @@
 
 ```
 go-file-sync/
-├── controller/          # 控制器包
-│   ├── address_controller.go    # IP地址获取控制器
-│   ├── file_controller.go       # 文件下载控制器
-│   ├── files_controller.go      # 文件上传控制器
-│   ├── qrcode_controller.go     # 二维码生成控制器
-│   └── text_controller.go       # 文本上传控制器
-├── frontend/           # 前端资源
-│   └── dist/
-├── main.go             # 主程序入口
-├── go.mod              # Go模块定义
-└── go.sum              # 依赖版本锁定
+├── server/              # 服务器主包，包含所有后端服务相关代码
+│   ├── config/          # 配置管理模块，负责处理应用配置信息
+│   │   └── path.go      # 路径配置，定义文件存储路径和静态资源路径
+│   ├── controller/      # 控制器包，处理HTTP请求和业务逻辑
+│   │   ├── address_controller.go    # IP地址获取控制器，提供本机IP地址查询功能
+│   │   ├── file_controller.go       # 文件下载控制器，处理文件下载请求
+│   │   ├── files_controller.go      # 文件上传控制器，处理文件上传请求
+│   │   ├── qrcode_controller.go     # 二维码生成控制器，生成包含IP地址的二维码
+│   │   └── text_controller.go       # 文本上传控制器，处理文本内容上传和保存
+│   ├── frontend/       # 前端资源目录，包含WebView界面相关文件
+│   ├── initailizers/   # 初始化模块，负责应用启动前的初始化工作
+│   │   └── cors.go     # CORS配置，处理跨域请求设置
+│   └── server.go       # 服务器入口文件，初始化Gin引擎和路由
+├── ws/                 # WebSocket模块，负责实时通信功能
+│   ├── client.go       # WebSocket客户端实现，处理客户端连接
+│   ├── http_controller.go # WebSocket HTTP控制器，处理WebSocket握手
+│   └── hub.go          # WebSocket中心，管理客户端连接和消息广播
+├── main.go             # 主程序入口，启动服务器和初始化应用
+├── go.mod              # Go模块定义文件，声明项目依赖
+├── go.sum              # Go依赖版本锁定文件，确保依赖版本一致性
+├── .dockerignore       # Docker构建忽略文件，指定不需要包含在Docker镜像中的文件
+└── Dockerfile          # Docker镜像构建文件，定义容器化配置
 ```
 
 ## 接口进度
